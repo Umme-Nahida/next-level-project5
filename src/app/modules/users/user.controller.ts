@@ -64,7 +64,7 @@ const blockUser = catchAsync(async (req: Request, res: Response, next: NextFunct
 const unblockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.id;
 
-    const user = await userService.blockUser(userId)
+    const user = await userService.unblockUser(userId)
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,

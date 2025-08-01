@@ -12,7 +12,7 @@ route.post('/register', userController.createUser);
 route.get('/all-users',checkAuth(Role.ADMIN), userController.allUsers);
 route.get('/all-drivers',checkAuth(Role.ADMIN), userController.allDrivers);
 route.get('/all-rides',checkAuth(Role.ADMIN), userController.allRides);
-route.post('/users/block/:id',checkAuth(Role.ADMIN), userController.blockUser);
-route.post('/users/unblock/:id',checkAuth(Role.ADMIN), userController.unblockUser);
+route.patch('/block/:id',checkAuth(Role.ADMIN), userController.blockUser);
+route.patch('/unblock/:id',checkAuth(Role.ADMIN), userController.unblockUser);
 
 export const userRoute = route;
