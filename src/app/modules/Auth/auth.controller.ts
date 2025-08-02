@@ -22,7 +22,7 @@ const credentialsLogin = catchAsync(async(req:Request,res:Response, next: NextFu
         }
 
        const userToken = createUserTokens(user)
-       console.log("userToken",userToken)
+    //    console.log("userToken",userToken)
 
          res.cookie("token",userToken.refreshToken,{
         httpOnly: true,

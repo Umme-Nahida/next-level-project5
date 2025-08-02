@@ -10,7 +10,7 @@ import { envVars } from "../../confic/env";
 const addUser = async(payload: Partial<IUser>)=>{
 
       const {email,password,...rest} = payload;
-      console.log("addUserPayload",payload)
+      // console.log("addUserPayload",payload)
 
       const exceedUser = await Users.findOne({email})
 

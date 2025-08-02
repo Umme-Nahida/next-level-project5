@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
 const rideSchema = new Schema({
-  rider: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  rider: { type: Schema.Types.ObjectId, ref: 'User' },
   driver: { type: Schema.Types.ObjectId, ref: 'User' },
   pickupLocation: {
     lat: { type: Number, required: true },
