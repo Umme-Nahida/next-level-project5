@@ -5,7 +5,7 @@ import { envVars } from "./app/confic/env";
 
 
 let server: Server;
-const port = 3000
+const port = 5000
 
 const startServer = async()=>{
    await mongoose.connect(envVars.DB_URL)
