@@ -4,6 +4,9 @@ import { driverService } from "./driver.services";
 import { JwtPayload } from "jsonwebtoken";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
+import { isActive } from "../users/user.interface";
+import AppError from "../../ErrorHandler/appErrors";
+import { Users } from "../users/user.model";
 
 
 export const driverAcceptRide = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -61,7 +64,7 @@ export const driverInTransitRide = catchAsync(async (req: Request, res: Response
 /**
  * Driver: complete ride
  */
-export const driverCompleteRide = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+ const driverCompleteRide = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const driver = req.user as JwtPayload;
     const rideId = req.params.id;
 
@@ -75,7 +78,54 @@ export const driverCompleteRide = catchAsync(async (req: Request, res: Response,
     })
 });
 
+
+export const driverEarningsHistory = catchAsync(async (req: Request, res: Response) => {
+  const driverId = (req.user as JwtPayload).userId;
+
+  const result = await driverService.driverEarningsHistory(driverId)
+  
+
+  sendResponse(res, {
+        success: true,
+        statusCode: 200,
+        message: "Driver earnings history retrieved successfully",
+        data: result
+    })
+});
+
+
+
+
+ const driverSetAvailability = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const driverId = (req.user as JwtPayload).userId as string;
+  const { isActive: newStatus } = req.body;
+
+  // validate newStatus must be 'ACTIVE' or 'INACTIVE'
+  if (!newStatus || ![isActive.ACTIVE, isActive.INACTIVE].includes(newStatus)) {
+    return next(new AppError(400,"isActive must be 'ACTIVE' or 'INACTIVE'"));
+  }
+
+  const driver = await Users.findByIdAndUpdate(
+    driverId,
+    { isActive: newStatus },
+    { new: true }
+  );
+
+   sendResponse(res, {
+        success: true,
+        statusCode: 200,
+        message: "Driver availability updated",
+        data: driver
+    })
+});
+
+
+
 export const driverController = {
     driverAcceptRide,
-    driverInTransitRide
+    driverPickupRide,
+    driverInTransitRide,
+    driverCompleteRide,
+    driverSetAvailability,
+    driverEarningsHistory
 }

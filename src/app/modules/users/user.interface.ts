@@ -17,7 +17,6 @@ export enum isActive{
 }
 
 
-
 export interface IUser {
   _id?: string;                
   name: string;

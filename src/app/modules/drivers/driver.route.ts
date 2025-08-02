@@ -7,8 +7,11 @@ const route = Router()
 
 // only rider can access this route
 route.patch('/approve/:id',checkAuth(Role.DRIVER), driverController.driverAcceptRide);
-// route.get('/me',checkAuth(Role.DRIVER), rideController.getMyRides);
-// route.patch('/:id',checkAuth(Role.DRIVER), rideController.riderCancelRide);
+route.patch('/:id/pickup',checkAuth(Role.DRIVER), driverController.driverPickupRide);
+route.patch('/:id/in-transit',checkAuth(Role.DRIVER), driverController.driverInTransitRide);
+route.patch('/:id/complete',checkAuth(Role.DRIVER), driverController.driverCompleteRide);
+route.get('/earnings',checkAuth(Role.DRIVER), driverController.driverEarningsHistory);
+route.get('/setAvaility',checkAuth(Role.DRIVER), driverController.driverSetAvailability);
 
 
 export const driverRoute = route;
