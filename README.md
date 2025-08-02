@@ -44,5 +44,32 @@ This backend API supports a ride booking system with three roles: Admin, Driver,
 | GET    | /api/rides/earnings        | View completed rides & total earnings       |
 | PATCH  | /api/drivers/availability  | Set driver availability (ACTIVE / INACTIVE) |
 
+<h2>✅Extra Features</h2>
+*Password hashing (bcrypt)
+
+*JWT-based login & route protection
+
+*User blocking/unblocking by admin
+
+*Driver approval/suspension by admin
+
+*Complete ride history for riders
+
+*Earnings history for drivers
+
+*Timestamps history for each ride status
+
+
+
+<h2>✅Tech Stack</h2>
+*Node.js, Express.js
+
+*MongoDB & Mongoose
+
+*JWT, bcrypt
+
+*Clean architecture: controllers, services, middlewares
+
+
 
 
