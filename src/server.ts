@@ -16,3 +16,52 @@ const startServer = async()=>{
 }
 
 startServer()
+
+process.on('SIGTERM',()=>{
+
+    console.log('sigtern is recieved and shutting down our server..');
+    
+    if(server){
+        server.close(()=>{
+            process.exit(1)
+        })
+    }
+    process.exit(1)
+})
+
+process.on('SIGINT',()=>{
+
+    console.log('SIGINT SIGNAL is recieved and shutting down our server..');
+    
+    if(server){
+        server.close(()=>{
+            process.exit(1)
+        })
+    }
+    process.exit(1)
+})
+
+process.on('unhandledRejection',(err)=>{
+
+    console.log('unhandleRejection error is detected',err);
+    
+    if(server){
+        server.close(()=>{
+            process.exit(1)
+        })
+    }
+    process.exit(1)
+})
+
+// uncaght rejection err handling
+process.on('uncaughtException',(err)=>{
+
+    console.log('uncaughtException error is detected',err);
+    
+    if(server){
+        server.close(()=>{
+            process.exit(1)
+        })
+    }
+    process.exit(1)
+})
