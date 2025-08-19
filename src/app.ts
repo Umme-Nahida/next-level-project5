@@ -13,19 +13,30 @@ const app = express()
 
 
 // middlewere
+app.use(express.json())
+app.use(cookieParser())
+
+// express-session first
 app.use(expressSession({
   secret:"your secret",
   resave:false,
   saveUninitialized:false
   
 }))
-app.use(express.json())
+
+// passport middlewares after session
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(cookieParser())
-app.use(express.json())
-app.use(cors())
+
+// cors
+app.use(cors({
+  origin:["http://localhost:5173"],
+  credentials:true
+}))
+
+// route endpoint
 app.use('/api/v1',routes)
+
 
 app.get('/', (req:Request, res:Response) => {
   res.send('Hello World!')
