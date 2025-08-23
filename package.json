@@ -45,6 +45,7 @@
     "passport-custom": "^1.1.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
+    "redis": "^5.8.2",
     "zod": "^4.0.14"
   }
 }
