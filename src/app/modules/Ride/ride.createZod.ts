@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { IMethod } from "./ride.interface";
 
 export const rideSchema = z.object({
   rider: z.string().optional(),
@@ -15,6 +16,7 @@ export const rideSchema = z.object({
     lng: z.number(),
     address: z.string().optional(),
   }),
+   paymentMethod: z.enum(Object.keys(IMethod)).optional(),
 
   status: z.enum([
     'requested',

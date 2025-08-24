@@ -31,6 +31,7 @@ export const userSchema = z.object({
   role: z.enum(Object.keys(Role)).optional().default(Role.RIDER),
 
   isApproved: z.boolean().optional(),
+  isVerified: z.boolean().optional(),
 
   isActive: z.enum(Object.keys(isActive)).optional(),
 

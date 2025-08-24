@@ -26,7 +26,7 @@ const credentialsLogin = catchAsync(async(req:Request,res:Response, next: NextFu
 
          res.cookie("token",userToken.refreshToken,{
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite:"strict"
        })
 

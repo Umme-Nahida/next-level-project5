@@ -5,7 +5,7 @@ export const validateCreateSchema = (zodSchema: ZodObject) => async (req: Reques
 
     try {
         req.body = await zodSchema.parseAsync(req.body)
-        // console.log("zod req",req.body)
+        console.log("zod req",req.body)
         next()
     } catch (err) {
         next(err)

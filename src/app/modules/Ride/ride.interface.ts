@@ -1,3 +1,10 @@
+
+export enum IMethod{
+    Card = "Card",
+    Wallet= "Wallet",
+    Cash="Cash"
+}
+
 export interface IRide {
   _id?: string;               
   rider: string;               
@@ -12,6 +19,7 @@ export interface IRide {
     lng: number;
     address?: string;
   };
+  paymentMethod: IMethod;
   status: 
      'requested'
     | 'accepted'

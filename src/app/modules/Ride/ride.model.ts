@@ -1,5 +1,6 @@
 
 import mongoose from "mongoose";
+import { IMethod } from "./ride.interface";
 const { Schema, model } = mongoose;
 
 const rideSchema = new Schema({
@@ -15,6 +16,7 @@ const rideSchema = new Schema({
     lng: { type: Number, required: true },
     address: { type: String }
   },
+  paymentMethod:{type:String, enum:IMethod},
   status: { 
     type: String, 
     enum: [

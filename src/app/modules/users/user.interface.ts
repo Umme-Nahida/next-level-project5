@@ -24,7 +24,8 @@ export interface IUser {
   email: string;
   password: string;
   role: Role
-  isApproved?: boolean;      
+  isApproved?: boolean;     
+  isVerified?: boolean;     
   isActive?: isActive;        
   vehicleInfo?: {
     model: string;

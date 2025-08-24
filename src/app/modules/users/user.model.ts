@@ -23,6 +23,7 @@ const userSchema = new Schema({
   },
   // Driver-specific fields 
   isApproved: { type: Boolean, default: false },
+  isVerified: { type: Boolean, default: false },
   isActive: { type: String, enum: Object.values(isActive) },
   vehicleInfo: {
     type: {
