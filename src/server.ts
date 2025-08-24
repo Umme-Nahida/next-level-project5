@@ -2,6 +2,7 @@ import {Server} from "http"
 import app from "./app";
 import mongoose from "mongoose";
 import { envVars } from "./app/confic/env";
+import { connectRedis } from "./app/confic/redis.config";
 
 
 let server: Server;
@@ -15,7 +16,10 @@ const startServer = async()=>{
 })
 }
 
-startServer()
+ (async()=>{
+    await startServer()
+    await connectRedis()
+ })()
 
 process.on('SIGTERM',()=>{
 
