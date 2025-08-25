@@ -23,7 +23,8 @@ const riderRequest = catchAsync(async (req: Request, res: Response, next: NextFu
 
 const getMyRides = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const rider = req.user;
-    const allRides = await rideService.getAllRides(rider)
+    const query = req.query;
+    const allRides = await rideService.getAllRides(rider,query)
 
     sendResponse(res, {
         success: true,
