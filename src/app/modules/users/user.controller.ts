@@ -38,8 +38,9 @@ const allDrivers = catchAsync(async (req: Request, res: Response, next: NextFunc
 
 
 const allRides = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const query = req.query;
 
-    const users = await userService.allRide()
+    const users = await userService.allRide(query)
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,

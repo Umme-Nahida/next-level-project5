@@ -5,6 +5,7 @@ import httpStatus from "http-status-codes"
 import becryptjs from "bcryptjs"
 import { envVars } from "../../confic/env";
 import { Ride } from "../Ride/ride.model";
+import { exitToruQuery } from "../../utils/constand";
 
 
 
@@ -41,15 +42,38 @@ const allUsers = async () => {
 
 const allDrivers = async () => {
 
-  const users = await Users.find({role:'DRIVER'}).sort({ createdAt: -1 });
+  const users = await Users.find({ role: 'DRIVER' }).sort({ createdAt: -1 });
 
   return users
 
 }
 
-const allRide = async () => {
+const allRide = async (query: any) => {
 
-  const users = await Ride.find().sort({ createdAt: -1 });
+  const searchTerm = query.searchTerm || "";
+  const status = query.status || null || "";
+  const sort = query.sort || "-createdAt";
+  const minFare = query.minFare ? Number(query.minFare) : 0;
+  const maxFare = query.maxFare ? Number(query.maxFare) : Infinity
+  const page = Number(query.page) || 1;
+  const limit = Number(query.limit) || 5;
+
+  for(const field of exitToruQuery){
+        delete query[field]
+    }
+
+
+
+  const users = await Ride.find({
+    $or: [
+      { status: { $regex: status, $options: "i" } },
+      { fare: { $gte: minFare, $lte: maxFare } },
+      { "pickupLocation.address": { $regex: searchTerm, $options: "i" } },
+      { "destinationLocation.address": { $regex: searchTerm, $options: "i" } },
+    ]
+  }
+
+  ).sort(sort);
 
   return users
 
@@ -63,8 +87,8 @@ const blockUser = async (userId: string) => {
     { new: true }
   );
 
-  if (!user){
-    throw new AppError(404,"User not found")
+  if (!user) {
+    throw new AppError(404, "User not found")
   }
 
   return user;
@@ -78,8 +102,8 @@ const unblockUser = async (userId: string) => {
     { new: true }
   );
 
-  if (!user){
-    throw new AppError(404,"User not found")
+  if (!user) {
+    throw new AppError(404, "User not found")
   }
 
   return user;
