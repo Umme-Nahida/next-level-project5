@@ -57,10 +57,14 @@ const allRide = async (query: any) => {
   const maxFare = query.maxFare ? Number(query.maxFare) : Infinity
   const page = Number(query.page) || 1;
   const limit = Number(query.limit) || 5;
+  const skip = (page - 1) * limit;
 
-  for(const field of exitToruQuery){
-        delete query[field]
-    }
+  //--------------------------- this fil filtering will be used when you dont need to all property------------
+  const select = query.select.split(",").join(" ") || "";
+
+  for (const field of exitToruQuery) {
+    delete query[field]
+  }
 
 
 
@@ -73,7 +77,7 @@ const allRide = async (query: any) => {
     ]
   }
 
-  ).sort(sort);
+  ).find(query).sort(sort).select(select).skip(skip).limit(limit);
 
   return users
 
