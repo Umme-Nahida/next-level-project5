@@ -31,12 +31,13 @@ const riderRequest = async (payload: Partial<IRide>, riderInfo: any) => {
 }
 
 
-const getAllRides = async (riderInfo: any) => {
+const getAllRides = async (riderInfo: any,query:any) => {
     console.log(riderInfo)
-    const rider = riderInfo.userId;
+    const riderId = riderInfo.userId;
+    const searchTerm = query.searchTerm
+    
 
-
-    const newRide = await Ride.find({ rider: rider })
+    const newRide = await Ride.find({ rider: riderId })
 
     return newRide;
 
