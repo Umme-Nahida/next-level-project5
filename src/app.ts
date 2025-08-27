@@ -30,7 +30,7 @@ app.use(passport.session())
 
 // cors
 app.use(cors({
-  origin:["http://localhost:5173"],
+  origin:["http://localhost:5173","https://assignment-6-neon-eight.vercel.app"],
   credentials: true,
 }))
 
