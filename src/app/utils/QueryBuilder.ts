@@ -1,5 +1,5 @@
 import { Query } from "mongoose";
-import { exitToruQuery } from "../modules/tour/tour.constand";
+import { exitToruQuery } from "./constand";
 
 export class QueryModel<T> {
     public modelQuery: Query<T[], T>;
@@ -16,15 +16,28 @@ export class QueryModel<T> {
             delete filter[field]
         }
 
+        // ---- fare range filter (like old code) ----
+        const minFare = this.query.minFare ? Number(this.query.minFare) : 0;
+        const maxFare = this.query.maxFare ? Number(this.query.maxFare) : Infinity;
+
+        if (this.query.minFare || this.query.maxFare) {
+            (filter as any).fare = { $gte: minFare, $lte: maxFare }
+        }
+
         this.modelQuery = this.modelQuery.find(filter) //TourCollection.find().find(filter)
         return this;
     }
 
     search(searchFields: string[]): this {
         const searchTerm = this.query.searchTerm || "";
+
         console.log("searchFields", searchFields)
         console.log("searchTerm", searchTerm)
-        const searchArray = searchFields.map(field => ({ [field]: { $regex: searchTerm, $options: "i" } }))
+
+        const searchArray = searchFields
+            .filter(field => field !== "fare")
+            .map(field => ({ [field]: { $regex: searchTerm, $options: "i" } }))
+
         const searchQuery = {
             $or: searchArray
         }
@@ -41,14 +54,14 @@ export class QueryModel<T> {
         return this;
     }
 
-    select(): this {
-        console.log("select", this.query.select)
-        const select = this.query.select?.split(",").join(" ") || "";
+    // select(): this {
+    //     console.log("select", this.query.select)
+    //     const select = this.query.select?.split(",").join(" ") || "";
 
-        this.modelQuery = this.modelQuery.select(select)
+    //     this.modelQuery = this.modelQuery.select(select)
 
-        return this;
-    }
+    //     return this;
+    // }
 
     pagination(): this {
         const page = Number(this.query.page) || 1;
@@ -71,7 +84,7 @@ export class QueryModel<T> {
         const totalPage = Math.ceil(totalDocuments / limit);
 
         return {
-            page,limit,totalPage,total: totalDocuments
+            page, limit, totalPage, total: totalDocuments
         }
     }
 }
