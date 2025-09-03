@@ -93,6 +93,28 @@ const unblockUser = catchAsync(async (req: Request, res: Response, next: NextFun
 });
 
 
+const analyticsUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const users = await userService.analyticsUser()
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "user anatytics retrieve successfully",
+        data: users
+    })
+})
+
+
+const analyticsRide = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const users = await userService.analyticsRide()
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "user anatytics retrieve successfully",
+        data: users
+    })
+})
 
 
 
@@ -103,5 +125,7 @@ export const userController = {
     unblockUser,
     allDrivers,
     allRides,
-    updateProfile
+    updateProfile,
+    analyticsUser,
+    analyticsRide
 }

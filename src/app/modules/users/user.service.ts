@@ -169,7 +169,7 @@ const allRide = async (query: Record<string, string>) => {
 const blockUser = async (userId: string) => {
   const user = await Users.findByIdAndUpdate(
     userId,
-    { isActive: "BLOCKED", isApproved: false, isBlocked: true},
+    { isActive: "BLOCKED", isApproved: false, isBlocked: true },
     { new: true }
   );
 
@@ -184,7 +184,7 @@ const blockUser = async (userId: string) => {
 const unblockUser = async (userId: string) => {
   const user = await Users.findByIdAndUpdate(
     userId,
-    { isActive: "ACTIVE", isApproved: true, isVerified: true, isBlocked: false},
+    { isActive: "ACTIVE", isApproved: true, isVerified: true, isBlocked: false },
     { new: true }
   );
 
@@ -196,6 +196,60 @@ const unblockUser = async (userId: string) => {
 
 }
 
+
+
+const analyticsUser = async () => {
+
+  const totalUsers = await Users.countDocuments();
+  const totalRiders = await Users.countDocuments({ role: 'RIDER' });
+  const totalDrivers = await Users.countDocuments({ role: 'DRIVER' });
+  const totalAdmins = await Users.countDocuments({ role: 'ADMIN' });
+
+  return {
+    totalUsers,
+    totalAdmins, totalDrivers, totalRiders
+  }
+
+}
+
+// analytics all rides 
+const analyticsRide = async () => {
+
+  const totalRides = await Ride.countDocuments();
+  const completedRides = await Ride.countDocuments({ status: 'completed' });
+  const cancelledRides = await Ride.countDocuments({ status: 'cancelled' });
+  const inProgressRides = await Ride.countDocuments({ status: 'picked_up' });
+  const requestedRides = await Ride.countDocuments({ status: 'requested' });
+  const acceptedRides = await Ride.countDocuments({ status: 'accepted' });
+
+  // previos week in rides
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const ridesThisWeek = await Ride.countDocuments({
+    createdAt: { $gte: oneWeekAgo }
+  });
+
+  // previos monthe in rides
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+  const ridesThisMonth = await Ride.countDocuments({
+    createdAt: { $gte: oneMonthAgo }
+  });
+
+  return {
+    totalRides,
+    completedRides,
+    cancelledRides,
+    requestedRides,
+    acceptedRides,
+    inProgressRides,
+    ridesThisMonth,
+    ridesThisWeek
+  }
+
+}
+
+
 export const userService = {
   addUser,
   updateProfile,
@@ -203,5 +257,7 @@ export const userService = {
   blockUser,
   unblockUser,
   allDrivers,
-  allRide
+  allRide,
+  analyticsUser,
+  analyticsRide
 }
