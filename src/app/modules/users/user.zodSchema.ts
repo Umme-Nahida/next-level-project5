@@ -15,9 +15,13 @@ export const authProviderSchema = z.object({
 
 // vehicle info schema (nullable)
 export const vehicleInfoSchema = z.object({
-  model: z.string().min(1, "Model is required"),
-  licensePlate: z.string().min(1, "License plate is required"),
-  color: z.string().min(1, "Color is required"),
+  vehicle_model: z.string().min(1, "Model is required"),
+  vehicle_type: z.string().min(1, "Type is required"),
+  vehicle_number: z.string().min(1, "vehicle number is required"),
+  license_number: z.string().min(1, "vehicle license number is required"),
+  seats_available: z.string().optional(),
+  vehicle_color: z.string().optional(),
+  licenseExpireDate: z.date().min(1, "License Expire Date is required"),
 });
 
 // User schema
@@ -33,7 +37,7 @@ export const userSchema = z.object({
   isApproved: z.boolean().optional(),
   isVerified: z.boolean().optional(),
 
-  isActive: z.enum(Object.keys(isActive)).optional(),
+  isActive: z.enum(Object.keys(isActive)).optional().default(isActive.ACTIVE),
 
   vehicleInfo: vehicleInfoSchema.nullable().optional(),
 

@@ -4,8 +4,6 @@ import { sendResponse } from "../../utils/sendResponse"
 import httpStatus from "http-status-codes"
 import { rideService } from "./ride.service"
 import { JwtPayload } from "jsonwebtoken"
-import { any, string } from "zod"
-import { partial } from "zod/v4/core/util.cjs"
 
 const riderRequest = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
@@ -24,7 +22,7 @@ const riderRequest = catchAsync(async (req: Request, res: Response, next: NextFu
 const getMyRides = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const rider = req.user;
     const query = req.query;
-    const allRides = await rideService.getAllRides(rider,query)
+    const allRides = await rideService.getMyRides(rider,query)
 
     sendResponse(res, {
         success: true,
@@ -52,9 +50,41 @@ export const riderCancelRide = catchAsync(async (req: Request, res: Response, ne
 });
 
 
+export const estimate = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    
+    const body = req.body;
+
+    const result = await rideService.estimate(body)
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "The estimate fare retrieve successfully",
+        data: result
+    })
+});
+
+
+export const rideDetails = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    
+    const {id} = req.params;
+
+    const result = await rideService.rideDetails(id)
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "The ride Details retrieve successfully",
+        data: result
+    })
+});
+
+
 
 export const rideController = {
     riderRequest,
     getMyRides,
-    riderCancelRide
+    riderCancelRide,
+    rideDetails,
+    estimate
 }

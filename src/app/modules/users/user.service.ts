@@ -33,11 +33,53 @@ const addUser = async (payload: Partial<IUser>) => {
 
 }
 
-const allUsers = async () => {
+// update your profile 
+const updateProfile = async (payload: Partial<IUser>, decodedUser: any) => {
 
-  
+  const userId = decodedUser.userId
+  const updateInfo = payload;
+  console.log("updateUserPayload", payload, decodedUser)
 
-  const users = await Users.find().sort({ createdAt: -1 });
+  //   clg result: updateUserPayload { name: 'Umme Nahida' } {
+  //   userId: '688cf31c5bd9bffaaeef3e70',
+  //   email: 'niha@gmail.com',
+  //   role: 'RIDER',
+  //   iat: 1756568217,
+  //   exp: 1756654617
+  // }
+
+  const addUser = await Users.findByIdAndUpdate(
+    userId,
+    updateInfo,
+    { new: true }
+  )
+
+  return addUser
+
+}
+
+
+// -------get All user by admin
+const allUsers = async (query: any) => {
+  const { searchTerm, isApproved, isActive, role } = query;
+
+  console.log("query", query)
+  let filter: any = {};
+
+  if (searchTerm) {
+    filter.name = { $regex: searchTerm || "", $options: "i" }
+  }
+
+  if (isApproved) {
+    filter.isApproved = isApproved === "true"
+  }
+  if (isActive) {
+    filter.isActive = isActive
+  }
+  if (role) {
+    filter.role = role
+  }
+  const users = await Users.find(filter).sort({ createdAt: -1 });
 
   return users
 
@@ -98,12 +140,14 @@ const allDrivers = async () => {
 // }
 const allRide = async (query: Record<string, string>) => {
 
+  console.log("qery", query)
   const queryBuilder = new QueryModel(Ride.find(), query)
   const rideResult = await queryBuilder
     .search(searchField)
     .filter()
     .sort()
     .pagination()
+    .populate(["rider", "driver"])
     .build()
 
   const metaData = await queryBuilder.getMeta()
@@ -125,7 +169,7 @@ const allRide = async (query: Record<string, string>) => {
 const blockUser = async (userId: string) => {
   const user = await Users.findByIdAndUpdate(
     userId,
-    { isActive: "BLOCKED" },
+    { isActive: "BLOCKED", isApproved: false, isBlocked: true},
     { new: true }
   );
 
@@ -140,7 +184,7 @@ const blockUser = async (userId: string) => {
 const unblockUser = async (userId: string) => {
   const user = await Users.findByIdAndUpdate(
     userId,
-    { isActive: "ACTIVE" },
+    { isActive: "ACTIVE", isApproved: true, isVerified: true, isBlocked: false},
     { new: true }
   );
 
@@ -154,6 +198,7 @@ const unblockUser = async (userId: string) => {
 
 export const userService = {
   addUser,
+  updateProfile,
   allUsers,
   blockUser,
   unblockUser,

@@ -30,13 +30,13 @@ export const driverAcceptRide = catchAsync(async (req: Request, res: Response, n
 export const driverPickupRide = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const driver = req.user as JwtPayload
     const rideId = req.params.id;
-
-    const result = await driverService.driverPickupRide(driver, rideId)
+    const {status} = req.params;
+    const result = await driverService.driverPickupRide(driver, rideId, status)
 
     sendResponse(res, {
         success: true,
         statusCode: 200,
-        message: "The Ride has been picked up",
+        message: `The Ride has been ${status} successfully`,
         data: result
     })
 });
@@ -99,6 +99,7 @@ export const driverEarningsHistory = catchAsync(async (req: Request, res: Respon
  const driverSetAvailability = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const driverId = (req.user as JwtPayload).userId as string;
   const { isActive: newStatus } = req.body;
+  console.log("updateStatus", req.body)
 
   // validate newStatus must be 'ACTIVE' or 'INACTIVE'
   if (!newStatus || ![isActive.ACTIVE, isActive.INACTIVE].includes(newStatus)) {
@@ -120,6 +121,48 @@ export const driverEarningsHistory = catchAsync(async (req: Request, res: Respon
 });
 
 
+// get my all rides 
+const getMyRides = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const rider = req.user;
+    const query = req.query;
+    const allRides = await driverService.getMyRides(rider,query)
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "My rides Retrieved successfully",
+        data: allRides
+    })
+})
+
+
+// get all incoming ride requests  
+const incomingRequest = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const allRides = await driverService.incomingRequest()
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "Incoming Request Retrieved successfully",
+        data: allRides
+    })
+})
+
+
+
+// get manage Active Ride
+const manageActiveRide = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const driver = req.user;
+    const allRides = await driverService.manageActiveRide(driver)
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "Active Ride Retrieved successfully",
+        data: allRides
+    })
+})
+
 
 export const driverController = {
     driverAcceptRide,
@@ -127,5 +170,8 @@ export const driverController = {
     driverInTransitRide,
     driverCompleteRide,
     driverSetAvailability,
-    driverEarningsHistory
+    driverEarningsHistory,
+    getMyRides,
+    incomingRequest,
+    manageActiveRide
 }

@@ -43,6 +43,25 @@ const credentialsLogin = async(payload: Partial<IUser>)=>{
 
 }
 
+
+const getUser = async(req:any)=>{
+  
+    const userId = (req as any).user.userId;
+
+    const user = await Users.findById(userId).select("-password");
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, "User not found");
+    }
+
+
+   return {
+     user: user
+   }
+
+}
+
+
+
 const getNewRefreshToken = async(refreshToken: string)=>{
    const verifyRefreshToken = verifyToken(refreshToken,envVars.refresh_secret) as JwtPayload
 
@@ -93,9 +112,27 @@ const resetPassword = async(getOldPass:string, getNewPass:string, decodedToken: 
    return true
 }
 
+const changePassword = async (oldPassword: string, newPassword: string, decodedToken: JwtPayload) => {
+
+    const user = await Users.findById(decodedToken.userId)
+
+    const isOldPasswordMatch = await bcryptjs.compare(oldPassword, user!.password as string)
+    if (!isOldPasswordMatch) {
+        throw new AppError(httpStatus.UNAUTHORIZED, "Old Password does not match");
+    }
+
+    user!.password = await bcryptjs.hash(newPassword, Number(envVars.becrypt_salt_round))
+
+    user!.save();
+
+
+}
+
 
 export const authService = {
     credentialsLogin,
     getNewRefreshToken,
-    resetPassword
+    resetPassword,
+    changePassword,
+    getUser
 }

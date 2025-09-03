@@ -1,4 +1,4 @@
-import { Query } from "mongoose";
+import { PopulateOptions, Query } from "mongoose";
 import { exitToruQuery } from "./constand";
 
 export class QueryModel<T> {
@@ -6,85 +6,100 @@ export class QueryModel<T> {
     public query: Record<string, string>;
 
     constructor(modelQuery: Query<T[], T>, query: Record<string, string>) {
-        this.modelQuery = modelQuery,
-            this.query = query
+        this.modelQuery = modelQuery;
+        this.query = query;
     }
 
     filter(): this {
-        const filter = { ...this.query }
+        const filter = { ...this.query };
         for (const field of exitToruQuery) {
-            delete filter[field]
+            delete filter[field];
         }
-
-        // ---- fare range filter (like old code) ----
-        const minFare = this.query.minFare ? Number(this.query.minFare) : 0;
-        const maxFare = this.query.maxFare ? Number(this.query.maxFare) : Infinity;
 
         if (this.query.minFare || this.query.maxFare) {
-            (filter as any).fare = { $gte: minFare, $lte: maxFare }
+            const minFare = this.query.minFare ? Number(this.query.minFare) : 0;
+            const maxFare = this.query.maxFare ? Number(this.query.maxFare) : Infinity;
+            (filter as any).fare = { $gte: minFare, $lte: maxFare };
         }
 
-        this.modelQuery = this.modelQuery.find(filter) //TourCollection.find().find(filter)
+        if (this.query.date) {
+            const startOfDay = new Date(this.query.date);
+            startOfDay.setHours(0, 0, 0, 0);
+
+            const endOfDay = new Date(this.query.date);
+            endOfDay.setHours(23, 59, 59, 999);
+
+            (filter as any).createdAt = { $gte: startOfDay, $lte: endOfDay };
+            delete (filter as any).date;
+        }
+
+        this.modelQuery = this.modelQuery.find(filter);
         return this;
     }
 
     search(searchFields: string[]): this {
-        const searchTerm = this.query.searchTerm || "";
-
-        console.log("searchFields", searchFields)
-        console.log("searchTerm", searchTerm)
+        const searchTerm = this.query.searchTerm?.trim();
+        if (!searchTerm) return this;
 
         const searchArray = searchFields
             .filter(field => field !== "fare")
-            .map(field => ({ [field]: { $regex: searchTerm, $options: "i" } }))
+            .map(field => ({ [field]: { $regex: searchTerm, $options: "i" } }));
 
-        const searchQuery = {
-            $or: searchArray
+        if (searchArray.length > 0) {
+            this.modelQuery = this.modelQuery.find({ $or: searchArray });
         }
-        this.modelQuery = this.modelQuery.find(searchQuery)
 
         return this;
     }
 
     sort(): this {
         const sort = this.query.sort || "-createdAt";
-
-        this.modelQuery = this.modelQuery.sort(sort)
-
+        this.modelQuery = this.modelQuery.sort(sort);
         return this;
     }
 
-    // select(): this {
-    //     console.log("select", this.query.select)
-    //     const select = this.query.select?.split(",").join(" ") || "";
-
-    //     this.modelQuery = this.modelQuery.select(select)
-
-    //     return this;
-    // }
+    select(): this {
+        if (this.query.select) {
+            const select = this.query.select.split(",").join(" ");
+            this.modelQuery = this.modelQuery.select(select);
+        }
+        return this;
+    }
 
     pagination(): this {
         const page = Number(this.query.page) || 1;
         const limit = Number(this.query.limit) || 5;
         const skip = (page - 1) * limit;
 
-        this.modelQuery = this.modelQuery.skip(skip).limit(limit)
+        this.modelQuery = this.modelQuery.skip(skip).limit(limit);
+        return this;
+    }
 
+    populate(populateFields: PopulateOptions | (string | PopulateOptions)[]): this {
+        this.modelQuery = this.modelQuery.populate(populateFields);
         return this;
     }
 
     build() {
-        return this.modelQuery
+        return this.modelQuery;
     }
 
     async getMeta() {
-        const totalDocuments = await this.modelQuery.model.countDocuments()
         const page = Number(this.query.page) || 1;
         const limit = Number(this.query.limit) || 5;
+
+        const countQuery = this.modelQuery.model.find(
+            (this.modelQuery as any)._conditions
+        );
+
+        const totalDocuments = await countQuery.countDocuments();
         const totalPage = Math.ceil(totalDocuments / limit);
 
         return {
-            page, limit, totalPage, total: totalDocuments
-        }
+            page,
+            limit,
+            totalPage,
+            total: totalDocuments,
+        };
     }
 }

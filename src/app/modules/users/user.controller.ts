@@ -3,6 +3,8 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes"
 import { userService } from "./user.service";
+import { any } from "zod";
+import { IUser } from "./user.interface";
 
 const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = await userService.addUser(req.body)
@@ -15,9 +17,22 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     })
 })
 
+
+const updateProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedUser = req.user;
+    const user = await userService.updateProfile(req.body, decodedUser)
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "user profile update successfully",
+        data: user
+    })
+})
+
 const allUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    const users = await userService.allUsers()
+    const users = await userService.allUsers(req.query as any)
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
@@ -40,23 +55,25 @@ const allDrivers = catchAsync(async (req: Request, res: Response, next: NextFunc
 const allRides = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const query = req.query;
 
-    const users = await userService.allRide(query)
+    const users = await userService.allRide(query as any)
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
-        message: "user created successfully",
+        message: "All rides retrieve successfully",
         data: users
     })
 })
 
 const blockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.params)
     const userId = req.params.id;
+    const action = req.params.action;
 
     const user = await userService.blockUser(userId)
     sendResponse(res, {
         success: true,
-        statusCode: httpStatus.CREATED,
-        message: "user is blocked",
+        statusCode: httpStatus.OK,
+        message: `${action} successfully`,
         data: user
     })
 });
@@ -64,12 +81,13 @@ const blockUser = catchAsync(async (req: Request, res: Response, next: NextFunct
 
 const unblockUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.id;
+    const action = req.params.action;
 
     const user = await userService.unblockUser(userId)
     sendResponse(res, {
         success: true,
-        statusCode: httpStatus.CREATED,
-        message: "user is unblocked",
+        statusCode: httpStatus.OK,
+        message: `${action} successfully`,
         data: user
     })
 });
@@ -84,5 +102,6 @@ export const userController = {
     blockUser,
     unblockUser,
     allDrivers,
-    allRides
+    allRides,
+    updateProfile
 }

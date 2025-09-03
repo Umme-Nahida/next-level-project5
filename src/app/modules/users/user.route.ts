@@ -8,11 +8,12 @@ const route = Router();
 
 
 route.post('/register', userController.createUser);
+route.patch('/updateProfile',checkAuth(...Object.values(Role)), userController.updateProfile);
 // only admin can access this route
 route.get('/all-users',checkAuth(Role.ADMIN), userController.allUsers);
 route.get('/all-drivers',checkAuth(Role.ADMIN), userController.allDrivers);
 route.get('/all-rides',checkAuth(Role.ADMIN), userController.allRides);
-route.patch('/block/:id',checkAuth(Role.ADMIN), userController.blockUser);
-route.patch('/unblock/:id',checkAuth(Role.ADMIN), userController.unblockUser);
+route.patch('/block/:id/:action',checkAuth(Role.ADMIN), userController.blockUser);
+route.patch('/unblock/:id/:action',checkAuth(Role.ADMIN), userController.unblockUser);
 
 export const userRoute = route;

@@ -24,12 +24,16 @@ const userSchema = new Schema({
   // Driver-specific fields 
   isApproved: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: false },
-  isActive: { type: String, enum: Object.values(isActive) },
+  isActive: { type: String, enum: Object.values(isActive), default: isActive.ACTIVE },
   vehicleInfo: {
     type: {
-      model: String,
-      licensePlate: String,
-      color: String
+      vehicle_type: String,
+      vehicle_number: String,
+      license_number: String,
+      seats_available: String,
+      vehicle_model: String,
+      vehicle_color: String,
+      licenseExpireDate: Date
     },
     default: null
   },

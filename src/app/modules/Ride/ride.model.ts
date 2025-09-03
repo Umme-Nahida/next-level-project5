@@ -4,8 +4,8 @@ import { IMethod } from "./ride.interface";
 const { Schema, model } = mongoose;
 
 const rideSchema = new Schema({
-  rider: { type: Schema.Types.ObjectId, ref: 'User' },
-  driver: { type: Schema.Types.ObjectId, ref: 'User' },
+  rider: { type: Schema.Types.ObjectId, ref: 'Users' },
+  driver: { type: Schema.Types.ObjectId, ref: 'Users' },
   pickupLocation: {
     lat: { type: Number, required: true },
     lng: { type: Number, required: true },

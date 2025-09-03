@@ -12,7 +12,9 @@ const route = Router()
 route.post("/login", authController.credentialsLogin)
 route.post("/refresh-token", authController.getRefreshToken)
 route.post("/logout",authController.logout)
-route.get("/reset-pass", checkAuth(...Object.values(Role)), authController.resetPassword)
+route.post("/reset-pass", checkAuth(...Object.values(Role)), authController.resetPassword)
+route.post("/change-password", checkAuth(...Object.values(Role)), authController.changePassword)
+route.get("/me", checkAuth(...Object.values(Role)), authController.getUser)
 
 route.get("/google", async (req: Request, res: Response, next: NextFunction) => {
     const redirect = req.query.redirect || "/"

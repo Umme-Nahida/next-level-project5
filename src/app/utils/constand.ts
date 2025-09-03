@@ -1,2 +1,2 @@
-export const searchField = ["status","fare","pickupLocation.address","destinationLocation.address"];
+export const searchField = ["status","fare","pickupLocation.address","destinationLocation.address","rider.name","driver.name"];
 export const exitToruQuery = ["status","searchTerm","select","sort","select","limit","page","minFare","maxFare"]

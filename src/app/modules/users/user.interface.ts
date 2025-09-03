@@ -28,9 +28,13 @@ export interface IUser {
   isVerified?: boolean;     
   isActive?: isActive;        
   vehicleInfo?: {
-    model: string;
-    licensePlate: string;
-    color: string;
+    vehicle_type:string;
+    vehicle_number:string;
+    license_number:string;
+    seats_available:string;
+    vehicle_model: string;
+    vehicle_color: string;
+    licenseExpireDate: Date;
   } | null;
   auth: IAuthProvider[];
   createdAt?: Date;

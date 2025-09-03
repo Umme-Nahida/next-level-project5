@@ -10,7 +10,9 @@ const route = Router();
 
 // only rider can access this route
 route.post('/request',checkAuth(Role.RIDER), validateCreateSchema(rideSchema), rideController.riderRequest);
-route.get('/me',checkAuth(Role.RIDER), rideController.getMyRides);
+route.post('/estimate',checkAuth(Role.RIDER), rideController.estimate);
+route.get('/myRides',checkAuth(Role.RIDER), rideController.getMyRides);
+route.get('/rideDetails/:id',checkAuth(Role.RIDER), rideController.rideDetails);
 route.patch('/:id',checkAuth(Role.RIDER), rideController.riderCancelRide);
 // route.post('/users/unblock/:id', userController.createUser);
 

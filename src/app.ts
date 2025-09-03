@@ -14,6 +14,7 @@ const app = express()
 
 // middlewere
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 
 // express-session first
